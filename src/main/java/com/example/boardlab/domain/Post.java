@@ -16,7 +16,8 @@ public class Post {
     private Long userId;
     private String title;
     private String content;
-    private String imageUrl; // 게시글 작성 시 선택적으로 받을 이미지 URL
+    // 게시글 작성 시 선택적으로 받을 이미지 URL
+    private String imageUrl;
     private LocalDateTime createdAt;
     private int likesCount;
     private int viewsCount;
@@ -39,11 +40,11 @@ public class Post {
         this.content = content;
         this.imageUrl = imageUrl;
     }
+
     // 상세 조회 시 조회수 증가용
     public void increaseViewsCount() {
         this.viewsCount++;
     }
-
 
 
 }
