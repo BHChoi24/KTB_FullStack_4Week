@@ -5,12 +5,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 
 @Getter
-public class PostCreateResponseDto {
+public class PostUpdateResponseDto {
 
     @JsonProperty("post_id")
     private Long postId;
 
-    public PostCreateResponseDto(Post post) {
+    public PostUpdateResponseDto(Post post) {
         this.postId = post.getId();
     }
 }

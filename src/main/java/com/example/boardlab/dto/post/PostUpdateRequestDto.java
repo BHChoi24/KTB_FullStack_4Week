@@ -6,15 +6,11 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class PostCreateRequestDto {
-
-    // 현재 Security가 없으므로 작성자 식별을 위해 임시로 받음
-    private Long userId;
+public class PostUpdateRequestDto {
 
     private String title;
     private String content;
 
-    // JSON에서는 image_url, Java에서는 imageUrl
     @JsonProperty("image_url")
     private String imageUrl;
 }

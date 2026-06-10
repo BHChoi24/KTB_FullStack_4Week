@@ -65,5 +65,20 @@ public class CommentService {
         return comment;
     }
 
+    //게시글 댓글
+
+    // 특정 게시글의 댓글 목록 조회
+    public List<Comment> findByPostId(Long postId) {
+        return comments.stream()
+                .filter(comment -> comment.getPostId().equals(postId))
+                .toList();
+    }
+
+    // 특정 게시글의 댓글 개수 조회
+    public int countByPostId(Long postId) {
+        return findByPostId(postId).size();
+    }
+
+
 
 }
