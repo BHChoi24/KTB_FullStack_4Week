@@ -1,7 +1,7 @@
 package com.example.boardlab.dto.post;
 
 import com.example.boardlab.domain.Post;
-import com.example.boardlab.dto.CommentResponseDto;
+import com.example.boardlab.dto.comment.CommentResponseDto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 

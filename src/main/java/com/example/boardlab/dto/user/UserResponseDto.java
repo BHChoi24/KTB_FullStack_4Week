@@ -1,4 +1,4 @@
-package com.example.boardlab.dto;
+package com.example.boardlab.dto.user;
 
 import com.example.boardlab.domain.User;
 import lombok.Getter;

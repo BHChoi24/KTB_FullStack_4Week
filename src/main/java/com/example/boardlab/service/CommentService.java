@@ -1,7 +1,7 @@
 package com.example.boardlab.service;
 
 import com.example.boardlab.domain.Comment;
-import com.example.boardlab.dto.CommentRequestDto;
+import com.example.boardlab.dto.comment.CommentRequestDto;
 import com.example.boardlab.exception.NotFoundException;
 import org.springframework.stereotype.Service;
 

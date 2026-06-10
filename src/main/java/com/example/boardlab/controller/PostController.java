@@ -1,8 +1,7 @@
 package com.example.boardlab.controller;
 
-import com.example.boardlab.domain.Comment;
 import com.example.boardlab.domain.Post;
-import com.example.boardlab.dto.CommentResponseDto;
+import com.example.boardlab.dto.comment.CommentResponseDto;
 import com.example.boardlab.dto.post.PostCreateRequestDto;
 import com.example.boardlab.dto.post.PostCreateResponseDto;
 import com.example.boardlab.dto.post.PostDetailResponseDto;
@@ -12,6 +11,7 @@ import com.example.boardlab.dto.post.PostUpdateResponseDto;
 import com.example.boardlab.response.ApiResponse;
 import com.example.boardlab.service.CommentService;
 import com.example.boardlab.service.PostService;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,6 +28,8 @@ public class PostController {
     }
 
     // 게시글 작성 API
+    // POST /posts
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/posts")
     public ApiResponse<PostCreateResponseDto> createPost(
             @RequestBody PostCreateRequestDto requestDto
@@ -41,6 +43,7 @@ public class PostController {
     }
 
     // 게시글 목록 조회 API
+    // GET /posts
     @GetMapping("/posts")
     public ApiResponse<List<PostListResponseDto>> getPosts() {
         List<PostListResponseDto> responseDtos = postService.findAll()
@@ -55,6 +58,7 @@ public class PostController {
     }
 
     // 게시글 상세 조회 API
+    // GET /posts/{postId}
     @GetMapping("/posts/{postId}")
     public ApiResponse<PostDetailResponseDto> getPost(
             @PathVariable Long postId
@@ -73,7 +77,8 @@ public class PostController {
     }
 
     // 게시글 수정 API
-    @PutMapping("/posts/{postId}")
+    // PATCH /posts/{postId}
+    @PatchMapping("/posts/{postId}")
     public ApiResponse<PostUpdateResponseDto> updatePost(
             @PathVariable Long postId,
             @RequestBody PostUpdateRequestDto requestDto
@@ -81,18 +86,19 @@ public class PostController {
         Post post = postService.updatePost(postId, requestDto);
 
         return ApiResponse.of(
-                "post_update_success",
+                "update_success",
                 new PostUpdateResponseDto(post)
         );
     }
 
     // 게시글 삭제 API
+    // DELETE /posts/{postId}
     @DeleteMapping("/posts/{postId}")
     public ApiResponse<Void> deletePost(
             @PathVariable Long postId
     ) {
         postService.deletePost(postId);
 
-        return ApiResponse.of("post_delete_success", null);
+        return ApiResponse.of("delete_success", null);
     }
 }

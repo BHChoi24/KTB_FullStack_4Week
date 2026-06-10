@@ -1,8 +1,8 @@
 package com.example.boardlab.controller;
 
 import com.example.boardlab.domain.Comment;
-import com.example.boardlab.dto.CommentRequestDto;
-import com.example.boardlab.dto.CommentResponseDto;
+import com.example.boardlab.dto.comment.CommentRequestDto;
+import com.example.boardlab.dto.comment.CommentResponseDto;
 import com.example.boardlab.response.ApiResponse;
 import com.example.boardlab.service.CommentService;
 import org.springframework.web.bind.annotation.*;

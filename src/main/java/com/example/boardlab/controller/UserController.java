@@ -1,8 +1,8 @@
 package com.example.boardlab.controller;
 
 import com.example.boardlab.domain.User;
-import com.example.boardlab.dto.UserRequestDto;
-import com.example.boardlab.dto.UserResponseDto;
+import com.example.boardlab.dto.user.UserRequestDto;
+import com.example.boardlab.dto.user.UserResponseDto;
 import com.example.boardlab.response.ApiResponse;
 import com.example.boardlab.service.UserService;
 
