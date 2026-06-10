@@ -1,7 +1,8 @@
 package com.example.boardlab.service;
 
 import com.example.boardlab.domain.User;
-import com.example.boardlab.dto.UserRequestDto;
+import com.example.boardlab.dto.user.UserSignupRequestDto;
+import com.example.boardlab.dto.user.UserSignupResponseDto;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -18,14 +19,20 @@ public class UserService {
     private Long sequence = 1L;
 
     //회원가입 기능
-    public User signup(UserRequestDto requestDto) {
+    public User signup(UserSignupRequestDto requestDto) {
 
         User user = new User(
                 sequence++,
                 requestDto.getEmail(),
                 requestDto.getPassword(),
-                requestDto.getNickname()
+                requestDto.getNickname(),
+                requestDto.getProfileImage()
         );
+
+        users.add(user);
+
+        return user;
+    }
 
         users.add(user);
 

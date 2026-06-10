@@ -16,12 +16,10 @@ public class Post {
     private Long userId;
     private String title;
     private String content;
-
-    // 게시글 작성 시 선택적으로 받을 이미지 URL
-    private String imageUrl;
-
-    // 게시글 작성 시간
+    private String imageUrl; // 게시글 작성 시 선택적으로 받을 이미지 URL
     private LocalDateTime createdAt;
+    private int likesCount;
+    private int viewsCount;
 
     //게시글 객체를 생성하기 위한 생성자
     public Post(Long id, Long userId, String title, String content, String imageUrl) {
