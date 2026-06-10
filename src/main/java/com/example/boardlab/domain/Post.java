@@ -34,11 +34,20 @@ public class Post {
         this.viewsCount = 0;
     }
 
-    // 게시글 수정 기능
+    // 게시글 수정 기능 (PATCH 방식) 널값이면 그냥 두기
     public void update(String title, String content, String imageUrl) {
-        this.title = title;
-        this.content = content;
-        this.imageUrl = imageUrl;
+
+        if (title != null) {
+            this.title = title;
+        }
+
+        if (content != null) {
+            this.content = content;
+        }
+
+        if (imageUrl != null) {
+            this.imageUrl = imageUrl;
+        }
     }
 
     // 상세 조회 시 조회수 증가용

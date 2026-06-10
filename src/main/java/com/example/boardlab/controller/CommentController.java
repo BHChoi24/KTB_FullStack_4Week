@@ -5,6 +5,7 @@ import com.example.boardlab.dto.comment.CommentRequestDto;
 import com.example.boardlab.dto.comment.CommentResponseDto;
 import com.example.boardlab.response.ApiResponse;
 import com.example.boardlab.service.CommentService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -23,7 +24,7 @@ public class CommentController {
     @PostMapping("/posts/{postId}/comments")
     public ApiResponse<CommentResponseDto> createComment(
             @PathVariable Long postId,
-            @RequestBody CommentRequestDto requestDto
+            @Valid @RequestBody CommentRequestDto requestDto
     ) {
 
         Comment comment = commentService.createComment(postId, requestDto);
@@ -66,7 +67,7 @@ public class CommentController {
     public ApiResponse<CommentResponseDto> updateComment(
             @PathVariable Long postId,
             @PathVariable Long commentId,
-            @RequestBody CommentRequestDto requestDto
+            @Valid @RequestBody CommentRequestDto requestDto
     ) {
 
         Comment comment = commentService.updateComment(commentId, requestDto);

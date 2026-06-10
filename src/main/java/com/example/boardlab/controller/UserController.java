@@ -1,23 +1,16 @@
 package com.example.boardlab.controller;
 
 import com.example.boardlab.domain.User;
-import com.example.boardlab.dto.user.UserRequestDto;
 import com.example.boardlab.dto.user.UserResponseDto;
+import com.example.boardlab.dto.user.UserSignupRequestDto;
+import com.example.boardlab.dto.user.UserSignupResponseDto;
 import com.example.boardlab.response.ApiResponse;
 import com.example.boardlab.service.UserService;
-
-//import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 
-
-//유저 처리 컨트롤러
-
-//HTTP 요청을 처리하는 컨트롤러이다
 @RestController
 public class UserController {
 
@@ -27,31 +20,40 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("/users")
-    public ApiResponse<UserResponseDto> signup(
-            @RequestBody UserRequestDto requestDto
+    // 회원가입 API
+    // POST /users/signup
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping("/users/signup")
+    public ApiResponse<UserSignupResponseDto> signup(
+            @Valid@RequestBody UserSignupRequestDto requestDto
     ) {
 
         User user = userService.signup(requestDto);
 
-        UserResponseDto responseDto =
-                new UserResponseDto(user);
+        UserSignupResponseDto responseDto =
+                new UserSignupResponseDto(user);
 
-        return ApiResponse.success(responseDto);
+        return ApiResponse.of(
+                "user_add_success",
+                responseDto
+        );
     }
 
     // 회원 단건 조회 API
-    // GET /users/{userId}, URL값을 변수로 받기
+    // GET /users/{userId}
     @GetMapping("/users/{userId}")
     public ApiResponse<UserResponseDto> getUser(
             @PathVariable Long userId
     ) {
 
-        //회원 찾는 로직
         User user = userService.findById(userId);
 
-        UserResponseDto responseDto = new UserResponseDto(user);
+        UserResponseDto responseDto =
+                new UserResponseDto(user);
 
-        return ApiResponse.success(responseDto);
+        return ApiResponse.of(
+                "user_access_success",
+                responseDto
+        );
     }
 }

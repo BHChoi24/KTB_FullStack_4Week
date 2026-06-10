@@ -1,6 +1,8 @@
 package com.example.boardlab.dto.post;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -8,13 +10,18 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PostCreateRequestDto {
 
-    // 현재 Security가 없으므로 작성자 식별을 위해 임시로 받음
+    //유저 널이면 안됌
+    @NotNull(message = "user_id_empty")
+    @JsonProperty("user_id")
     private Long userId;
 
+    //빈칸알림
+    @NotBlank(message = "title_empty")
     private String title;
+
+    @NotBlank(message = "content_empty")
     private String content;
 
-    // JSON에서는 image_url, Java에서는 imageUrl
     @JsonProperty("image_url")
     private String imageUrl;
 }

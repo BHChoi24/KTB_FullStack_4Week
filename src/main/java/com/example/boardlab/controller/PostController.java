@@ -11,6 +11,7 @@ import com.example.boardlab.dto.post.PostUpdateResponseDto;
 import com.example.boardlab.response.ApiResponse;
 import com.example.boardlab.service.CommentService;
 import com.example.boardlab.service.PostService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,7 +33,7 @@ public class PostController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/posts")
     public ApiResponse<PostCreateResponseDto> createPost(
-            @RequestBody PostCreateRequestDto requestDto
+            @Valid @RequestBody PostCreateRequestDto requestDto
     ) {
         Post post = postService.createPost(requestDto);
 
@@ -81,7 +82,7 @@ public class PostController {
     @PatchMapping("/posts/{postId}")
     public ApiResponse<PostUpdateResponseDto> updatePost(
             @PathVariable Long postId,
-            @RequestBody PostUpdateRequestDto requestDto
+            @Valid @RequestBody PostUpdateRequestDto requestDto
     ) {
         Post post = postService.updatePost(postId, requestDto);
 
