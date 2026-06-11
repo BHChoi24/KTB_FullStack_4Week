@@ -43,8 +43,11 @@ public class UserController {
     public ApiResponse<UserSignupResponseDto> signup(
             @Valid @RequestBody UserSignupRequestDto requestDto
     ) {
+        // 1. 서비스 계층에 비즈니스 로직 처리를 위임하고, 가입된 User 도메인 객체를 받음
         User user = userService.signup(requestDto);
+        // 2. 도메인 객체에서 필요한 정보(id)만 추출하여 응답용 DTO를 생성
         UserSignupResponseDto responseDto = new UserSignupResponseDto(user);
+        // 3. 시트 명세서 규격("user_add_success")과 상태코드 201(Created)을 매핑하여 최종 반환
         return ApiResponse.of("user_add_success", responseDto);
     }
 

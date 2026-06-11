@@ -22,7 +22,9 @@ public class UserService {
      * 회원 가입을 처리한 후 영속 저장소(Repository)에 영구 위임합니다.
      */
     public User signup(UserSignupRequestDto requestDto) {
+        // 1. 외부 노출용 DTO에서 데이터를 꺼내 시스템의 핵심 핵심 모델인 User 도메인(엔티티) 객체로 변환
         User user = new User(null, requestDto.getEmail(), requestDto.getPassword(), requestDto.getNickname(), requestDto.getProfileImage());
+        // 2. 변환된 도메인 객체를 물리 저장소(Repository)에 넘겨 저장을 위임
         return userRepository.save(user);
     }
 

@@ -3,7 +3,7 @@ package com.example.boardlab.dto.user;
 import jakarta.validation.constraints.NotBlank;
 
 /**
- * [클래스 역할] 회원가입(POST /users/signup) 요청 시 입력 필드의 유효성을 일차적으로 검증하는 가방입니다.
+ * [클래스 역할] 회원가입(POST /users/signup) 요청 시 입력 필드의 유효성을 일차적으로 검증
  */
 public class UserSignupRequestDto {
     @NotBlank(message = "email_empty")

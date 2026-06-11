@@ -29,8 +29,11 @@ public class UserRepository {
      * 메모리 리스트에 수동 객체를 등록하고 인덱스를 자동 발급합니다.
      */
     public User save(User user) {
+        // 1. 엔티티를 저장할때, sequence++를 이용하여 고유 식별 번호(ID)를 발급
         User savedUser = new User(sequence++, user.getEmail(), user.getPassword(), user.getNickname(), user.getProfileImage());
+        // 2. 가상공간에 유저 저장 -> 디비 대신
         users.add(savedUser);
+        // 3. 고유 ID가 부여후 생성된 회원 도메인 객체를 상위 계층으로 다시 역반환
         return savedUser;
     }
 
