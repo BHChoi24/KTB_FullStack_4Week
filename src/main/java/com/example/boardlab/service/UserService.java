@@ -3,46 +3,36 @@ package com.example.boardlab.service;
 import com.example.boardlab.domain.User;
 import com.example.boardlab.dto.user.UserSignupRequestDto;
 import com.example.boardlab.exception.NotFoundException;
+import com.example.boardlab.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-
-// User 비즈니스 로직을 처리하는 서비스
 @Service
 public class UserService {
 
-    // DB 대신 사용할 임시 저장소
-    private final List<User> users = new ArrayList<>();
+    private final UserRepository userRepository;
 
-    // 사용자 ID 자동 증가용 변수
-    private Long sequence = 1L;
-
-    // 회원가입 기능
-    public User signup(UserSignupRequestDto requestDto) {
-
-        User user = new User(
-                sequence++,
-                requestDto.getEmail(),
-                requestDto.getPassword(),
-                requestDto.getNickname(),
-                requestDto.getProfileImage()
-        );
-
-        users.add(user);
-
-        return user;
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
-    // 회원 단건 조회 기능
+    public User signup(UserSignupRequestDto requestDto) {
+        User user = new User(null, requestDto.getEmail(), requestDto.getPassword(), requestDto.getNickname(), requestDto.getProfileImage());
+        return userRepository.save(user);
+    }
+
     public User findById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("user_not_found"));
+    }
 
-        for (User user : users) {
-            if (user.getId().equals(userId)) {
-                return user;
-            }
+    // 시트 기준 로그인 구현체 분리
+    public User login(String email, String password) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("email_password_check"));
+
+        if (!user.getPassword().equals(password)) {
+            throw new IllegalArgumentException("email_password_check");
         }
-
-        throw new NotFoundException("user_not_found");
+        return user;
     }
 }

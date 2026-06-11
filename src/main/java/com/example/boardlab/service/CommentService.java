@@ -3,82 +3,56 @@ package com.example.boardlab.service;
 import com.example.boardlab.domain.Comment;
 import com.example.boardlab.dto.comment.CommentRequestDto;
 import com.example.boardlab.exception.NotFoundException;
+import com.example.boardlab.repository.CommentRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
-
-//댓글(비즈니스 로직들) 생성, 조회 삭
 @Service
 public class CommentService {
 
-    // DB 대신 사용할 댓글 임시 저장소
-    private final List<Comment> comments = new ArrayList<>();
-    // 댓글 ID 자동 증가용 변수
-    private Long sequence = 1L;
+    private final CommentRepository commentRepository;
 
-
-    // 댓글 생성 기능
-    //postId는 URL에서 받고, userId와 content는 요청 Body에서 받는다.
-    public Comment createComment(Long postId, CommentRequestDto requestDto) {
-
-        Comment comment = new Comment(
-                sequence++,
-                postId,
-                requestDto.getUserId(),
-                requestDto.getContent()
-        );
-
-        comments.add(comment);
-
-        return comment;
+    public CommentService(CommentRepository commentRepository) {
+        this.commentRepository = commentRepository;
     }
 
-    // 댓글 단건 조회 기능
-    public Comment findById(Long commentId) {
+    public Comment createComment(Long postId, CommentRequestDto requestDto) {
+        Comment comment = new Comment(null, postId, requestDto.getUserId(), requestDto.getContent());
+        return commentRepository.save(comment);
+    }
 
-        for (Comment comment : comments) {
-            if (comment.getId().equals(commentId)) {
-                return comment;
-            }
+    public Comment findById(Long commentId) {
+        return commentRepository.findById(commentId)
+                .orElseThrow(() -> new NotFoundException("comment_not_found"));
+    }
+
+    public void deleteComment(Long commentId, Long requestUserId) {
+        Comment comment = findById(commentId);
+
+        if (!comment.getUserId().equals(requestUserId)) {
+            throw new IllegalArgumentException("forbidden_author");
         }
 
-        throw new NotFoundException("comment_not_found");
+        commentRepository.delete(comment);
     }
 
-    // 댓글 삭제 기능
-    public void deleteComment(Long commentId) {
-
+    public Comment updateComment(Long commentId, Long requestUserId, CommentRequestDto requestDto) {
         Comment comment = findById(commentId);
 
-        comments.remove(comment);
-    }
-
-    // 댓글 수정 기능
-    public Comment updateComment(Long commentId, CommentRequestDto requestDto) {
-
-        Comment comment = findById(commentId);
+        if (!comment.getUserId().equals(requestUserId)) {
+            throw new IllegalArgumentException("forbidden_author");
+        }
 
         comment.update(requestDto.getContent());
-
         return comment;
     }
 
-    //게시글 댓글
-
-    // 특정 게시글의 댓글 목록 조회
     public List<Comment> findByPostId(Long postId) {
-        return comments.stream()
-                .filter(comment -> comment.getPostId().equals(postId))
-                .toList();
+        return commentRepository.findByPostId(postId);
     }
 
-    // 특정 게시글의 댓글 개수 조회
     public int countByPostId(Long postId) {
         return findByPostId(postId).size();
     }
-
-
-
 }

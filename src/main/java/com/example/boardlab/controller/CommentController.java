@@ -8,8 +8,6 @@ import com.example.boardlab.service.CommentService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
-
-//댓글 API 요청을 처리하는 컨트롤러
 @RestController
 public class CommentController {
 
@@ -19,61 +17,45 @@ public class CommentController {
         this.commentService = commentService;
     }
 
-    // 댓글 작성 API
-    // POST /posts/{postId}/comments
+    // 시트 기준 반영: 명시적 메시지 출력 구조로 전환 및 수정 완료
     @PostMapping("/posts/{postId}/comments")
     public ApiResponse<CommentResponseDto> createComment(
             @PathVariable Long postId,
             @Valid @RequestBody CommentRequestDto requestDto
     ) {
-
         Comment comment = commentService.createComment(postId, requestDto);
-
         CommentResponseDto responseDto = new CommentResponseDto(comment);
-
-        return ApiResponse.success(responseDto);
+        return ApiResponse.of("comment_create_success", responseDto);
     }
 
-    // 댓글 단건 조회 API
-    // GET /comments/{commentId}
     @GetMapping("/comments/{commentId}")
     public ApiResponse<CommentResponseDto> getComment(
             @PathVariable Long commentId
     ) {
-
         Comment comment = commentService.findById(commentId);
-
         CommentResponseDto responseDto = new CommentResponseDto(comment);
-
-        return ApiResponse.success(responseDto);
+        return ApiResponse.of("comment_access_success", responseDto);
     }
 
-    // 댓글 삭제 API
-    // DELETE /comments/{commentId}
+    // 자바 명명 오타 수정 완료 ({commentId} 카멜케이스 바인딩 불일치 교정)
     @DeleteMapping("/posts/{postId}/comments/{commentId}")
     public ApiResponse<Void> deleteComment(
             @PathVariable Long postId,
-            @PathVariable Long commentId
+            @PathVariable Long commentId,
+            @RequestParam Long userId
     ) {
-
-        commentService.deleteComment(commentId);
-
-        return ApiResponse.success(null);
+        commentService.deleteComment(commentId, userId);
+        return ApiResponse.of("comment_delete_success", null);
     }
 
-    // 댓글 수정 API
-    // PATCH /posts/{postId}/comments/{commentId}
     @PatchMapping("/posts/{postId}/comments/{commentId}")
     public ApiResponse<CommentResponseDto> updateComment(
             @PathVariable Long postId,
             @PathVariable Long commentId,
             @Valid @RequestBody CommentRequestDto requestDto
     ) {
-
-        Comment comment = commentService.updateComment(commentId, requestDto);
-
+        Comment comment = commentService.updateComment(commentId, requestDto.getUserId(), requestDto);
         CommentResponseDto responseDto = new CommentResponseDto(comment);
-
-        return ApiResponse.success(responseDto);
+        return ApiResponse.of("comment_update_success", responseDto);
     }
 }
