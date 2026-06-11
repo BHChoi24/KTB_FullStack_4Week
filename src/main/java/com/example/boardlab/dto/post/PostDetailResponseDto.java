@@ -2,33 +2,47 @@ package com.example.boardlab.dto.post;
 
 import com.example.boardlab.domain.Post;
 import com.example.boardlab.dto.comment.CommentResponseDto;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * [클래스 역할] 게시글 상세 보기(GET /posts/{postId}) 호출 시 게시글의 전체 본문과
- * 그 하단에 종속된 댓글 리스트 배열(List)까지 복합적으로 묶어서 하나의 큰 JSON으로 구조화하는 객체입니다.
- */
+/** 게시글 본문과 댓글을 한 번에 내려주는 상세 응답 DTO입니다. */
 public class PostDetailResponseDto {
-    private Long id;
-    private String title;
-    private String content;
-    private String imageUrl;
-    private int viewsCount;
-    private List<CommentResponseDto> comments; // 하단에 노출할 댓글 Response DTO의 집합 배열
+    private final Long postId;
+    private final String title;
+    private final String content;
+    private final Long userId;
+    private final String nickname;
+    private final LocalDateTime createdAt;
+    private final String imageUrl;
+    private final int likesCount;
+    private final int commentsCount;
+    private final int viewsCount;
+    private final List<CommentResponseDto> comments;
 
-    public PostDetailResponseDto(Post post, List<CommentResponseDto> comments) {
-        this.id = post.getId();
+    public PostDetailResponseDto(Post post, String nickname, List<CommentResponseDto> comments) {
+        this.postId = post.getId();
         this.title = post.getTitle();
         this.content = post.getContent();
+        this.userId = post.getUserId();
+        this.nickname = nickname;
+        this.createdAt = post.getCreatedAt();
         this.imageUrl = post.getImageUrl();
+        this.likesCount = post.getLikesCount();
+        this.commentsCount = comments.size();
         this.viewsCount = post.getViewsCount();
-        this.comments = comments; // 게시글 정보와 댓글 정보의 결합 처리
+        this.comments = comments;
     }
 
-    public Long getId() { return id; }
+    public Long getPostId() { return postId; }
     public String getTitle() { return title; }
     public String getContent() { return content; }
+    public Long getUserId() { return userId; }
+    public String getNickname() { return nickname; }
+    public LocalDateTime getCreatedAt() { return createdAt; }
     public String getImageUrl() { return imageUrl; }
+    public int getLikesCount() { return likesCount; }
+    public int getCommentsCount() { return commentsCount; }
     public int getViewsCount() { return viewsCount; }
     public List<CommentResponseDto> getComments() { return comments; }
 }

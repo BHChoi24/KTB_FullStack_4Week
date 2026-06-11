@@ -25,4 +25,13 @@ public class User {
     public String getPassword() { return password; }
     public String getNickname() { return nickname; }
     public String getProfileImage() { return profileImage; }
+
+    public void updateProfile(String nickname, String profileImage) {
+        this.nickname = nickname;
+        this.profileImage = profileImage;
+    }
+
+    public void updatePassword(String password) {
+        this.password = password;
+    }
 }

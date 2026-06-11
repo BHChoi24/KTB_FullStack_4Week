@@ -8,17 +8,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * [클래스 역할] 게시글 메모리 컬렉션 생명주기를 주관하는 인메모리 포스트 저장소입니다.
- */
+/** DB 대신 List에 게시글 데이터를 저장하는 메모리 저장소입니다. */
 @Repository
 public class PostRepository {
     private final List<Post> posts = new ArrayList<>();
     private Long sequence = 1L;
 
-    /**
-     * [더미 데이터 적재] 사전에 글이 등록되어 있는 상태를 테스트하기 위해 임의의 3개 게시글을 기포팅합니다.
-     */
+    /** 서버가 시작될 때 목록과 상세 조회에 사용할 기본 게시글을 준비합니다. */
     @PostConstruct
     public void initDummyData() {
         posts.add(new Post(sequence++, 1L, "첫 번째 게시글 제목", "테스트 본문 내용입니다.", "image1.jpg"));
@@ -27,6 +23,7 @@ public class PostRepository {
     }
 
     public Post save(Post post) {
+        // 요청 객체에는 ID가 없으므로 저장할 때 새 ID를 부여합니다.
         Post savedPost = new Post(sequence++, post.getUserId(), post.getTitle(), post.getContent(), post.getImageUrl());
         posts.add(savedPost);
         return savedPost;
@@ -36,11 +33,19 @@ public class PostRepository {
         return new ArrayList<>(posts);
     }
 
+    public List<Post> findByUserId(Long userId) {
+        return posts.stream().filter(post -> post.getUserId().equals(userId)).toList();
+    }
+
     public Optional<Post> findById(Long id) {
         return posts.stream().filter(p -> p.getId().equals(id)).findFirst();
     }
 
     public void delete(Post post) {
         posts.remove(post);
+    }
+
+    public void deleteAllByUserId(Long userId) {
+        posts.removeIf(post -> post.getUserId().equals(userId));
     }
 }

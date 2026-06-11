@@ -7,19 +7,13 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-
-/**
- * [클래스 역할] 댓글 컬렉션 저장 관리를 도맡아 하는 인메모리 댓글 저장소입니다.
- */
+/** DB 대신 List에 댓글 데이터를 저장하는 메모리 저장소입니다. */
 @Repository
 public class CommentRepository {
     private final List<Comment> comments = new ArrayList<>();
     private Long sequence = 1L;
 
-    /**
-     * [더미 데이터 적재] 특정 게시글 번호(postId)에 종속된 더미 댓글 3건을 부팅 시 자동 매핑합니다.
-     */
+    /** 서버가 시작될 때 게시글 상세 조회에 사용할 기본 댓글을 준비합니다. */
     @PostConstruct
     public void initDummyData() {
         comments.add(new Comment(sequence++, 1L, 2L, "좋은 글이네요! 많이 배워갑니다."));
@@ -33,13 +27,10 @@ public class CommentRepository {
         return savedComment;
     }
 
-    /**
-     * 쿼리 튜닝 대용 스트림 파이프라인: 특정 게시글(postId) 하위의 댓글셋만 필터링 수집합니다.
-     */
     public List<Comment> findByPostId(Long postId) {
         return comments.stream()
                 .filter(c -> c.getPostId().equals(postId))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public Optional<Comment> findById(Long id) {
@@ -48,5 +39,13 @@ public class CommentRepository {
 
     public void delete(Comment comment) {
         comments.remove(comment);
+    }
+
+    public void deleteAllByPostId(Long postId) {
+        comments.removeIf(comment -> comment.getPostId().equals(postId));
+    }
+
+    public void deleteAllByUserId(Long userId) {
+        comments.removeIf(comment -> comment.getUserId().equals(userId));
     }
 }

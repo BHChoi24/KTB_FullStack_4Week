@@ -5,16 +5,16 @@ package com.example.boardlab.dto.user;
  */
 public class UserLoginResponseDto {
     private String token;     // 클라이언트에게 발급할 인증 토큰 (과제 기준 "accessToken" 하드코딩)
-    private Long user_id;     // 로그인에 성공한 사용자의 고유 ID 번호 (시트 기준 스네이크 케이스 포맷 준수)
+    private Long userId;
     private String nickname;  // 로그인에 성공한 사용자의 닉네임
 
-    public UserLoginResponseDto(String token, Long user_id, String nickname) {
+    public UserLoginResponseDto(String token, Long userId, String nickname) {
         this.token = token;
-        this.user_id = user_id;
+        this.userId = userId;
         this.nickname = nickname;
     }
 
     public String getToken() { return token; }
-    public Long getUser_id() { return user_id; }
+    public Long getUserId() { return userId; }
     public String getNickname() { return nickname; }
 }

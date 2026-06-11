@@ -2,78 +2,88 @@ package com.example.boardlab.service;
 
 import com.example.boardlab.domain.Comment;
 import com.example.boardlab.dto.comment.CommentRequestDto;
+import com.example.boardlab.exception.ForbiddenException;
 import com.example.boardlab.exception.NotFoundException;
 import com.example.boardlab.repository.CommentRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-/**
- * [클래스 역할] 특정 게시물 하위의 댓글 조작 및 권한 소유주 대조를 전담하는 서비스 클래스입니다.
- */
 @Service
 public class CommentService {
-
     private final CommentRepository commentRepository;
+    private final PostService postService;
+    private final UserService userService;
 
-    public CommentService(CommentRepository commentRepository) {
+    public CommentService(
+            CommentRepository commentRepository,
+            PostService postService,
+            UserService userService
+    ) {
         this.commentRepository = commentRepository;
+        this.postService = postService;
+        this.userService = userService;
     }
 
-    /**
-     * 댓글을 생성 계층 저장소에 누적 저장 지시합니다.
-     */
-    public Comment createComment(Long postId, CommentRequestDto requestDto) {
-        Comment comment = new Comment(null, postId, requestDto.getUserId(), requestDto.getContent());
-        return commentRepository.save(comment);
+    public Comment createComment(Long postId, Long userId, CommentRequestDto request) {
+        // 1. 로그인한 사용자인지 확인합니다.
+        userService.requireAuthenticated(userId);
+
+        // 2. 댓글을 작성할 게시글이 실제로 존재하는지 확인합니다.
+        postService.findById(postId);
+
+        // 3. 댓글을 저장합니다.
+        return commentRepository.save(new Comment(null, postId, userId, request.getContent()));
     }
 
-    /**
-     * 댓글 단건 추적 실패 시 예외 규격화 처리
-     */
     public Comment findById(Long commentId) {
         return commentRepository.findById(commentId)
                 .orElseThrow(() -> new NotFoundException("comment_not_found"));
     }
 
-    /**
-     * 댓글 삭제 전, 요청자가 실제 댓글 작성자인지 ID 매칭 검사 기법 적용
-     */
-    public void deleteComment(Long commentId, Long requestUserId) {
-        Comment comment = findById(commentId);
-
-        if (!comment.getUserId().equals(requestUserId)) {
-            throw new IllegalArgumentException("forbidden_author");
-        }
-
+    public void deleteComment(Long postId, Long commentId, Long requestUserId) {
+        // 로그인 -> 댓글 경로 확인 -> 작성자 확인 -> 삭제 순서입니다.
+        userService.requireAuthenticated(requestUserId);
+        Comment comment = findCommentInPost(postId, commentId);
+        checkAuthor(comment, requestUserId);
         commentRepository.delete(comment);
     }
 
-    /**
-     * 댓글 내용 수정 전 소유주 검증 단계 거친 후 갱신
-     */
-    public Comment updateComment(Long commentId, Long requestUserId, CommentRequestDto requestDto) {
-        Comment comment = findById(commentId);
-
-        if (!comment.getUserId().equals(requestUserId)) {
-            throw new IllegalArgumentException("forbidden_author");
-        }
-
-        comment.update(requestDto.getContent());
+    public Comment updateComment(
+            Long postId,
+            Long commentId,
+            Long requestUserId,
+            CommentRequestDto request
+    ) {
+        // 로그인 -> 댓글 경로 확인 -> 작성자 확인 -> 수정 순서입니다.
+        userService.requireAuthenticated(requestUserId);
+        Comment comment = findCommentInPost(postId, commentId);
+        checkAuthor(comment, requestUserId);
+        comment.update(request.getContent());
         return comment;
     }
 
-    /**
-     * 특정 게시물 일련번호 하위에 종속된 댓글만 스크리닝하여 리스트로 반환합니다.
-     */
     public List<Comment> findByPostId(Long postId) {
         return commentRepository.findByPostId(postId);
     }
 
-    /**
-     * 목록 출력 시 활용할 댓글 누적 카운트 전용 로직
-     */
     public int countByPostId(Long postId) {
         return findByPostId(postId).size();
+    }
+
+    private Comment findCommentInPost(Long postId, Long commentId) {
+        // URL의 postId와 댓글이 실제로 속한 게시글 번호가 같은지 확인합니다.
+        postService.findById(postId);
+        Comment comment = findById(commentId);
+        if (!comment.getPostId().equals(postId)) {
+            throw new NotFoundException("comment_not_found");
+        }
+        return comment;
+    }
+
+    private void checkAuthor(Comment comment, Long requestUserId) {
+        if (!comment.getUserId().equals(requestUserId)) {
+            throw new ForbiddenException("forbidden_author");
+        }
     }
 }

@@ -1,6 +1,8 @@
 package com.example.boardlab.dto.user;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Size;
 
 /**
  * [클래스 역할] Postman으로 로그인 요청(POST /users/login) 시 클라이언트가 보내는 JSON 바디 데이터를 바인딩하고 검증하는 객체입니다.
@@ -9,10 +11,12 @@ public class UserLoginRequestDto {
 
     // 시트 조건 반영: 비어있을 경우 GlobalExceptionHandler를 통해 "email_empty" 사유를 반환합니다.
     @NotBlank(message = "email_empty")
+    @Email(message = "email_invalid")
     private String email;
 
     // 시트 조건 반영: 비어있을 경우 "password_empty" 사유를 반환합니다.
     @NotBlank(message = "password_empty")
+    @Size(min = 8, max = 20, message = "password_invalid")
     private String password;
 
     public UserLoginRequestDto() {}
