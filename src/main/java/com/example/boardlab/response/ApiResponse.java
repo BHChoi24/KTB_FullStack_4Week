@@ -1,33 +1,25 @@
 package com.example.boardlab.response;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
-/*
- * 모든 API 응답 형식을 통일하기 위한 클래스
- * 성공 응답과 실패 응답을 같은 구조로 내려주기 위해 사용한다.
+/**
+ * [클래스 역할] 서버가 반환하는 모든 성공 및 일반 실패(401, 403, 404) 응답의 공통 최상위 포맷 껍데기 클래스입니다.
+ * Postman 결과창에 일관된 단일 규격의 JSON 모양을 뿌려주기 위해 모든 컨트롤러의 반환형을 캡슐화합니다.
  */
-@Getter
-@RequiredArgsConstructor
 public class ApiResponse<T> {
+    private String message; // 클라이언트에게 전달할 성공/실패 관련 고유 제어 태그 코드 (ex> "login_success")
+    private T data;         // 실제 결과 데이터셋이 실리는 제네릭 가방 공간
 
-    // 응답 상태 메시지
-    // 예: "success", "user_not_found"
-    private final String message;
-
-    // 실제 응답 데이터
-    // 성공 시에는 객체(데이터)가 들어가고, 실패 시에는 null이 들어갈 수 있다.
-    private final T data;
-
-    /*
-     * 성공 응답을 쉽게 만들기 위한 메서드
-     * Controller에서 ApiResponse.success(data) 형태로 사용할 수 있다.
-     */
-    public static <T> ApiResponse<T> success(T data) {
-        return new ApiResponse<>("success", data);
+    private ApiResponse(String message, T data) {
+        this.message = message;
+        this.data = data;
     }
 
+    /**
+     * 성공 또는 일반 단건형 응답 팩토리 메서드
+     */
     public static <T> ApiResponse<T> of(String message, T data) {
         return new ApiResponse<>(message, data);
     }
+
+    public String getMessage() { return message; }
+    public T getData() { return data; }
 }

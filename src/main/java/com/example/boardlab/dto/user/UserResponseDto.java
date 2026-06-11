@@ -1,25 +1,22 @@
 package com.example.boardlab.dto.user;
 
 import com.example.boardlab.domain.User;
-import lombok.Getter;
 
-/*
- * 회원 정보를 응답하기 위한 DTO
- * 비밀번호는 응답으로 보내지 않기 때문에 제외
+/**
+ * [클래스 역할] 회원 정보 조회(GET /users/{userId}) 시 패스워드와 같은 민감 정보를 제외하고 안전한 데이터만 응답하기 위한 객체입니다.
  */
-@Getter
 public class UserResponseDto {
-
-    private Long id;
-
     private String email;
-
     private String nickname;
+    private String profileImage;
 
-    //User 객체를 UserResponseDto로 변환하는 생성자
     public UserResponseDto(User user) {
-        this.id = user.getId();
         this.email = user.getEmail();
         this.nickname = user.getNickname();
+        this.profileImage = user.getProfileImage();
     }
+
+    public String getEmail() { return email; }
+    public String getNickname() { return nickname; }
+    public String getProfileImage() { return profileImage; }
 }

@@ -2,54 +2,33 @@ package com.example.boardlab.dto.post;
 
 import com.example.boardlab.domain.Post;
 import com.example.boardlab.dto.comment.CommentResponseDto;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Getter;
-
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-@Getter
+/**
+ * [클래스 역할] 게시글 상세 보기(GET /posts/{postId}) 호출 시 게시글의 전체 본문과
+ * 그 하단에 종속된 댓글 리스트 배열(List)까지 복합적으로 묶어서 하나의 큰 JSON으로 구조화하는 객체입니다.
+ */
 public class PostDetailResponseDto {
-
-    @JsonProperty("post_id")
-    private Long postId;
-
-    @JsonProperty("user_id")
-    private Long userId;
-
-    private String nickname;
+    private Long id;
     private String title;
     private String content;
-
-    @JsonProperty("image_url")
     private String imageUrl;
-
-    @JsonProperty("created_at")
-    private String createdAt;
-
-    @JsonProperty("likes_count")
-    private int likesCount;
-
-    @JsonProperty("comments_count")
-    private int commentsCount;
-
-    @JsonProperty("views_count")
     private int viewsCount;
-
-    private List<CommentResponseDto> comments;
+    private List<CommentResponseDto> comments; // 하단에 노출할 댓글 Response DTO의 집합 배열
 
     public PostDetailResponseDto(Post post, List<CommentResponseDto> comments) {
-        this.postId = post.getId();
-        this.userId = post.getUserId();
-        this.nickname = "user" + post.getUserId();
+        this.id = post.getId();
         this.title = post.getTitle();
         this.content = post.getContent();
         this.imageUrl = post.getImageUrl();
-        this.createdAt = post.getCreatedAt()
-                .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        this.likesCount = post.getLikesCount();
-        this.commentsCount = comments.size();
         this.viewsCount = post.getViewsCount();
-        this.comments = comments;
+        this.comments = comments; // 게시글 정보와 댓글 정보의 결합 처리
     }
+
+    public Long getId() { return id; }
+    public String getTitle() { return title; }
+    public String getContent() { return content; }
+    public String getImageUrl() { return imageUrl; }
+    public int getViewsCount() { return viewsCount; }
+    public List<CommentResponseDto> getComments() { return comments; }
 }

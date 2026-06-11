@@ -1,43 +1,22 @@
 package com.example.boardlab.dto.comment;
 
 import com.example.boardlab.domain.Comment;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Getter;
 
-import java.time.format.DateTimeFormatter;
-
-/*
- * 댓글 응답을 위한 DTO
- *
- * 시트 기준:
- * comment_id, user_id, nickname, created_at, content 형태로 응답한다.
+/**
+ * [클래스 역할] 댓글 정보를 화면이나 게시글 상세 정보 내부에 배열 형태로 출력할 때 규격화된 포맷으로 변환해 주는 응답 가방입니다.
  */
-@Getter
 public class CommentResponseDto {
-
-    @JsonProperty("comment_id")
-    private Long commentId;
-
-    @JsonProperty("user_id")
-    private Long userId;
-
-    private String nickname;
-
-    @JsonProperty("created_at")
-    private String createdAt;
-
-    private String content;
+    private Long commentId;  // 시트 명세에 명시된 하위 필드명 준수 ("comment_id" 매핑용)
+    private Long userId;     // 댓글을 작성한 사람의 ID
+    private String content;   // 댓글 내용
 
     public CommentResponseDto(Comment comment) {
         this.commentId = comment.getId();
         this.userId = comment.getUserId();
-
-        // 현재는 DB/Security가 없으므로 임시 닉네임 생성
-        this.nickname = "user" + comment.getUserId();
-
-        this.createdAt = comment.getCreatedAt()
-                .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-
         this.content = comment.getContent();
     }
+
+    public Long getCommentId() { return commentId; }
+    public Long getUserId() { return userId; }
+    public String getContent() { return content; }
 }

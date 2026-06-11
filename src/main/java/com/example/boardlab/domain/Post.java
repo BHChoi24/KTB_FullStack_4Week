@@ -1,60 +1,46 @@
 package com.example.boardlab.domain;
 
-import java.time.LocalDateTime;
-
-import lombok.Getter;
-
-/*
- * Post 클래스는 게시글 데이터를 표현 -> 도메인요청 POST전부 여기로 일단
- * DB를 사용않하고 만들어서 Entity를, 일반 Java 클래스로 구현하여 진행
- * 시트 POST /posts, GET /posts/{postId}
+/**
+ * [클래스 역할] 게시글(Post)의 핵심 원본 데이터와 게시글 관련 비즈니스 행위를 담당하는 도메인 모델입니다.
  */
-@Getter
 public class Post {
+    private Long id;             // 게시글의 고유 식별 번호
+    private Long userId;         // 게시글을 작성한 회원의 고유 식별자 (작성자 검증 시 활용)
+    private String title;        // 게시글 제목
+    private String content;      // 게시글 본문 내용
+    private String imageUrl;     // 게시글 첨부 이미지 URL (선택 사항)
+    private int viewsCount;      // 게시글 조회수 카운터
 
-    private Long id;
-    private Long userId;
-    private String title;
-    private String content;
-    // 게시글 작성 시 선택적으로 받을 이미지 URL
-    private String imageUrl;
-    private LocalDateTime createdAt;
-    private int likesCount;
-    private int viewsCount;
-
-    //게시글 객체를 생성하기 위한 생성자
     public Post(Long id, Long userId, String title, String content, String imageUrl) {
         this.id = id;
         this.userId = userId;
         this.title = title;
         this.content = content;
         this.imageUrl = imageUrl;
-        this.createdAt = LocalDateTime.now();
-        this.likesCount = 0;
-        this.viewsCount = 0;
+        this.viewsCount = 0; // 초기 생성 시 조회수는 0으로 기본 설정
     }
 
-    // 게시글 수정 기능 (PATCH 방식) 널값이면 그냥 두기
-    public void update(String title, String content, String imageUrl) {
-
-        if (title != null) {
-            this.title = title;
-        }
-
-        if (content != null) {
-            this.content = content;
-        }
-
-        if (imageUrl != null) {
-            this.imageUrl = imageUrl;
-        }
-    }
-
-    // 상세 조회 시 조회수 증가용
+    /**
+     * [도메인 비즈니스 로직] 게시글 상세 조회 시 호출되어 조회수를 1 증가시킵니다.
+     */
     public void increaseViewsCount() {
         this.viewsCount++;
     }
 
+    /**
+     * [도메인 비즈니스 로직] 게시글 수정 요청 시 내부 데이터를 한 번에 안전하게 변경합니다.
+     */
+    public void update(String title, String content, String imageUrl) {
+        this.title = title;
+        this.content = content;
+        this.imageUrl = imageUrl;
+    }
 
+    // [Getter 메서드] 계층 간 데이터 전환 시 값을 추출하기 위해 사용합니다.
+    public Long getId() { return id; }
+    public Long getUserId() { return userId; }
+    public String getTitle() { return title; }
+    public String getContent() { return content; }
+    public String getImageUrl() { return imageUrl; }
+    public int getViewsCount() { return viewsCount; }
 }
-

@@ -1,33 +1,16 @@
 package com.example.boardlab.dto.post;
 
 import com.example.boardlab.domain.Post;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Getter;
 
-import java.time.format.DateTimeFormatter;
-
-@Getter
+/**
+ * [클래스 역할] 게시글 등록 성공 후 발급된 게시글 고유 ID를 응답하기 위한 가방입니다.
+ */
 public class PostCreateResponseDto {
-
-    @JsonProperty("post_id")
-    private Long postId;
-
-    private String title;
-
-    private String content;
-
-    @JsonProperty("image_url")
-    private String imageUrl;
-
-    @JsonProperty("created_at")
-    private String createdAt;
+    private Long id;
 
     public PostCreateResponseDto(Post post) {
-        this.postId = post.getId();
-        this.title = post.getTitle();
-        this.content = post.getContent();
-        this.imageUrl = post.getImageUrl();
-        this.createdAt = post.getCreatedAt()
-                .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        this.id = post.getId();
     }
+
+    public Long getId() { return id; }
 }
